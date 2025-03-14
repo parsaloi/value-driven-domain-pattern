@@ -1,0 +1,31 @@
+stages:
+  - code-scan
+  - test
+  - build
+
+sast:
+  tags:
+    - selfhosted
+    - linux
+    - x64
+  stage: code-scan
+  include:
+    - template: Security/SAST.gitlab-ci.yml
+
+acceptance-testing-job:
+  tags:
+    - selfhosted
+    - linux
+    - x64
+  stage: test
+  script:
+    - bash demos/event-management-system/src/scripts/test.sh
+
+build-job:
+  tags:
+    - selfhosted
+    - linux
+    - x64
+  stage: build
+  script:
+    - bash demos/event-management-system/src/scripts/build.sh
