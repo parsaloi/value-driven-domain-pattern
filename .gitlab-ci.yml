@@ -1,16 +1,15 @@
 stages:
-  - code-scan
-  - test
-  - build
-
+- code-scan
+- test
+- build
 sast:
   tags:
     - selfhosted
     - linux
     - x64
   stage: code-scan
-  include:
-    - template: Security/SAST.gitlab-ci.yml
+include:
+- template: Security/SAST.gitlab-ci.yml
 
 acceptance-testing-job:
   tags:
