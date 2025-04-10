@@ -21,7 +21,8 @@ public class EventManagementCli {
 
         System.out.println("Welcome to Event Organizer CLI");
         while (true) {
-            System.out.println("\nOptions: 1) Create Event 2) Register Attendee 3) View Revenue 4) List Events 5) Exit");
+            System.out.println("\nOptions: 1) Create Event 2) Register Attendee 3) View Revenue 4) List Events " +
+                    "5) Exit 6) View Event Info 7) View Event Attendees");
             System.out.print("Choose an option: ");
             int choice = SCANNER.nextInt();
             SCANNER.nextLine();
@@ -32,6 +33,8 @@ public class EventManagementCli {
                 case 3 -> viewRevenue(registrations);
                 case 4 -> listEvents(events);
                 case 5 -> { System.out.println("Exiting..."); return; }
+                case 6 -> viewEventInfo(events);
+                case 7 -> viewEventAttendees(events, registrations);
                 default -> System.out.println("Invalid option");
             }
         }
@@ -154,9 +157,86 @@ public class EventManagementCli {
             System.out.println("No events.");
             return;
         }
-        for (Event e : events) {
-            System.out.println(e.name() + " (" + e.startTime().format(DATE_FORMAT) + " - " +
-                    e.endTime().format(DATE_FORMAT) + ") - " + eventType(e));
+        for (int i = 0; i < events.size(); i++) {
+            System.out.println(i + ": " + events.get(i).name() + " (" + events.get(i).startTime().format(DATE_FORMAT) +
+                    " - " + events.get(i).endTime().format(DATE_FORMAT) + ") - " + eventType(events.get(i)));
+        }
+    }
+
+    private static void viewEventInfo(List<Event> events) {
+        if (events.isEmpty()) {
+            System.out.println("No events available.");
+            return;
+        }
+        listEvents(events);
+        System.out.print("Select Event Index to View Info: ");
+        int eventIdx = SCANNER.nextInt();
+        SCANNER.nextLine();
+        if (eventIdx < 0 || eventIdx >= events.size()) {
+            System.out.println("Invalid event index.");
+            return;
+        }
+
+        Event event = events.get(eventIdx);
+        System.out.println("\nEvent Information:");
+        System.out.println("Name: " + event.name());
+        System.out.println("Start Time: " + event.startTime().format(DATE_FORMAT));
+        System.out.println("End Time: " + event.endTime().format(DATE_FORMAT));
+        System.out.println("Location: " + event.location().name() + " (" + event.location().address() + ")");
+        System.out.println("Max Attendees: " + event.maxAttendees());
+
+        switch (event) {
+            case Concert concert -> {
+                System.out.println("Artist: " + concert.artist());
+                System.out.println("Genre: " + concert.genre());
+                System.out.println("Ticket Price: " + concert.ticketPrice().amount() + " " + concert.ticketPrice().currency());
+            }
+            case Conference conference -> {
+                System.out.println("Speakers: " + String.join(", ", conference.speakers()));
+                System.out.println("Topics: " + String.join(", ", conference.topics()));
+                System.out.println("Registration Fee: " + conference.registrationFee().amount() + " " + conference.registrationFee().currency());
+            }
+            case Exhibition exhibition -> {
+                System.out.println("Theme: " + exhibition.theme());
+                System.out.println("Exhibitors: " + String.join(", ", exhibition.exhibitors()));
+                System.out.println("Entry Fee: " + exhibition.entryFee().amount() + " " + exhibition.entryFee().currency());
+            }
+            case Workshop workshop -> {
+                System.out.println("Instructor: " + workshop.instructor());
+                System.out.println("Skill Level: " + workshop.skillLevel());
+                System.out.println("Participation Fee: " + workshop.participationFee().amount() + " " + workshop.participationFee().currency());
+                System.out.println("Max Participants: " + workshop.maxParticipants());
+            }
+        }
+    }
+
+    private static void viewEventAttendees(List<Event> events, List<Registration> registrations) {
+        if (events.isEmpty()) {
+            System.out.println("No events available.");
+            return;
+        }
+        listEvents(events);
+        System.out.print("Select Event Index to View Attendees: ");
+        int eventIdx = SCANNER.nextInt();
+        SCANNER.nextLine();
+        if (eventIdx < 0 || eventIdx >= events.size()) {
+            System.out.println("Invalid event index.");
+            return;
+        }
+
+        Event event = events.get(eventIdx);
+        List<Registration> eventRegistrations = registrations.stream()
+                .filter(reg -> reg.event().id().equals(event.id()))
+                .toList();
+        if (eventRegistrations.isEmpty()) {
+            System.out.println("No attendees registered for " + event.name() + ".");
+            return;
+        }
+
+        System.out.println("\nAttendees for " + event.name() + ":");
+        for (Registration reg : eventRegistrations) {
+            Attendee attendee = reg.attendee();
+            System.out.println("Name: " + attendee.name() + ", Email: " + attendee.email() + ", Phone: " + attendee.phone());
         }
     }
 
