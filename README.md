@@ -119,7 +119,7 @@ Both CLIs offer:
 
 * List events or exit
 
-...
+```
 #Example Interaction (OOAD CLI):
 
 Welcome to Event Organizer CLI (OOP)
@@ -130,7 +130,7 @@ Select Event Type: 2
 Event Name: Kenya JUG Sessions
 Start Time (yyyy-MM-dd HH:mm): 2025-04-12 20:00
 End Time (yyyy-MM-dd HH:mm): 2025-04-12 21:00
-...
+```
 
 The VDD CLI follows a similar flow with immutable data handling.
 
@@ -146,7 +146,7 @@ Check script permissions (chmod +x *.sh on Unix-like systems).
 For Windows, run .bat scripts in Command Prompt.
 
 ## Contact
-For issues or questions, reach out to the presenter or open an issue in the repository.
+For issues or questions, reach out to the presenter or open an issue in the repository at https://gitlab.com/parsaizme/value-driven-domain-pattern.
 Happy coding, and enjoy the demos!
 
 
