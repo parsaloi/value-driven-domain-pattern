@@ -1,6 +1,6 @@
 # Value Driven Domain Pattern
 
-This project showcases two implementations of an event management system to compare traditional Object-Oriented Analysis and Design (OOAD) with the Value-Driven Domain Pattern (VDD). The demos are presented as part of a conference talk, demonstrating modern Java design practices.
+This project showcases two implementations of an event management system to compare classic Object-Oriented Analysis and Design (OOAD) with the Value-Driven Domain Pattern (VDD). The demos are presented as part of a conference talk, demonstrating modern Java design practices.
 
 - **OOAD Demo**: Uses mutable classes, inheritance, and Gang of Four patterns (Factory, Strategy, Observer).
 - **VDD Demo**: Leverages immutable records, sealed interfaces, pattern matching, and pure functions.
