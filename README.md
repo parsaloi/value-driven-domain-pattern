@@ -9,7 +9,7 @@ Both demos include a command-line interface (CLI) to create events, register att
 
 ## Prerequisites
 
-- **Java 21**: Ensure JDK 21 is installed. Download from [Adoptium](https://adoptium.net/) or [OpenJDK]
+- **Java 21**: Ensure JDK 21 is installed. Download from [Adoptium](https://adoptium.net/) or [Oracle](https://www.oracle.com/java/technologies/downloads/#java21)
 - **Operating System**: Unix-like (Linux, macOS) or Windows.
 - **Shell**: Bash for `.sh` scripts (Unix-like) or Command Prompt for `.bat` scripts (Windows).
 - **Git**: To clone the repository (optional).
