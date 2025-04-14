@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/build-logic" name="build-logic">
+                <projects>
+                  <project path="$PROJECT_DIR$/build-logic" />
+                  <project path="$PROJECT_DIR$/build-logic/convention" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/cli-app" name="cli-app">
+                <projects>
+                  <project path="$PROJECT_DIR$/cli-app" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/core" name="core">
+                <projects>
+                  <project path="$PROJECT_DIR$/core" />
+                  <project path="$PROJECT_DIR$/core/common" />
+                  <project path="$PROJECT_DIR$/core/domain" />
+                  <project path="$PROJECT_DIR$/core/operations" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/core/buildSrc" name="buildSrc">
+                <projects>
+                  <project path="$PROJECT_DIR$/core/buildSrc" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="23" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/build-logic" />
+            <option value="$PROJECT_DIR$/build-logic/convention" />
+            <option value="$PROJECT_DIR$/cli-app" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/core/buildSrc" />
+            <option value="$PROJECT_DIR$/core/common" />
+            <option value="$PROJECT_DIR$/core/domain" />
+            <option value="$PROJECT_DIR$/core/operations" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
