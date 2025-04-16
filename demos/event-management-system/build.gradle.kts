@@ -9,6 +9,7 @@ allprojects {
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 tasks.register("buildInOrder") {
@@ -28,5 +29,12 @@ tasks.register("cleanAll") {
         gradle.includedBuild("cli-app").task(":clean")
     }
 }
+
+tasks.register("runCliApp") {
+    group = "application"
+    description = "Runs the cli-app project"
+    dependsOn(gradle.includedBuild("cli-app").task(":run"))
+}
+
 
 defaultTasks("buildInOrder")

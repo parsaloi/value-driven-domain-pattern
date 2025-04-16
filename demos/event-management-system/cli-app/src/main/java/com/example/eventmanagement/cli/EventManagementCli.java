@@ -21,27 +21,59 @@ public class EventManagementCli {
         List<Event> events = new ArrayList<>();
         List<Registration> registrations = new ArrayList<>();
 
+        // Non-interactive mode if args are provided
+        if (args.length > 0) {
+            handleNonInteractiveMode(args, events, registrations);
+            return;
+        }
+
+        // Interactive mode
         System.out.println("Welcome to Event Organizer CLI");
         while (true) {
-            try {
-                displayMainMenu();
-                int choice = readIntInput("Choose an option: ", 1, 7);
-
-                switch (choice) {
-                    case 1 -> events.add(createEvent());
-                    case 2 -> registerAttendee(events, registrations);
-                    case 3 -> viewRevenue(registrations);
-                    case 4 -> listEvents(events);
-                    case 5 -> {
-                        System.out.println("Thank you for using Event Organizer CLI. Goodbye!");
-                        return;
-                    }
-                    case 6 -> viewEventInfo(events);
-                    case 7 -> viewEventAttendees(events, registrations);
+            displayMainMenu();
+            Integer choice = readIntInput("Choose an option: ", 1, 7);
+            if (choice == null) {
+                System.out.println("Invalid input or input stream closed. Returning to main menu.");
+                if (!SCANNER.hasNextLine()) {
+                    System.out.println("Input stream unavailable. Exiting.");
+                    return;
                 }
-            } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage() + ". Please try again.");
+                continue;
             }
+
+            switch (choice) {
+                case 1 -> {
+                    Event event = createEvent();
+                    if (event != null) {
+                        events.add(event);
+                        System.out.println("Event created successfully!");
+                    }
+                }
+                case 2 -> registerAttendee(events, registrations);
+                case 3 -> viewRevenue(registrations);
+                case 4 -> listEvents(events);
+                case 5 -> {
+                    System.out.println("Thank you for using Event Organizer CLI. Goodbye!");
+                    return;
+                }
+                case 6 -> viewEventInfo(events);
+                case 7 -> viewEventAttendees(events, registrations);
+            }
+        }
+    }
+
+    private static void handleNonInteractiveMode(String[] args, List<Event> events, List<Registration> registrations) {
+        if (args.length == 1 && args[0].equals("--help")) {
+            System.out.println("Event Organizer CLI: Non-Interactive Mode");
+            System.out.println("Usage: java -jar cli-app.jar [command]");
+            System.out.println("Commands:");
+            System.out.println("  --help          Display this help message");
+            System.out.println("  list-events     List all events (requires pre-loaded data)");
+            System.out.println("Interactive mode is used if no arguments are provided.");
+        } else if (args.length == 1 && args[0].equals("list-events")) {
+            listEvents(events);
+        } else {
+            System.out.println("Unknown command. Use --help for usage information.");
         }
     }
 
@@ -56,10 +88,13 @@ public class EventManagementCli {
         System.out.println("7) View Event Attendees");
     }
 
-    private static int readIntInput(String prompt, int min, int max) {
+    private static Integer readIntInput(String prompt, int min, int max) {
         for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
             try {
                 System.out.print(prompt);
+                if (!SCANNER.hasNextLine()) {
+                    return null;
+                }
                 String input = SCANNER.nextLine().trim();
                 int value = Integer.parseInt(input);
                 if (value >= min && value <= max) {
@@ -70,39 +105,48 @@ public class EventManagementCli {
                 System.out.println("Invalid input. Please enter a valid number.");
             }
         }
-        throw new IllegalStateException("Maximum attempts reached. Returning to main menu.");
+        return null;
     }
 
     private static String readNonEmptyString(String prompt) {
         for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
             System.out.print(prompt);
+            if (!SCANNER.hasNextLine()) {
+                return null;
+            }
             String input = SCANNER.nextLine().trim();
             if (!input.isBlank()) {
                 return input;
             }
             System.out.println("Input cannot be empty. Please try again.");
         }
-        throw new IllegalStateException("Maximum attempts reached for input.");
+        return null;
     }
 
     private static LocalDateTime readDateTime(String prompt) {
         for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
+            System.out.print(prompt);
+            if (!SCANNER.hasNextLine()) {
+                return null;
+            }
+            String input = SCANNER.nextLine().trim();
             try {
-                System.out.print(prompt);
-                String input = SCANNER.nextLine().trim();
                 return LocalDateTime.parse(input, DATE_FORMAT);
             } catch (DateTimeParseException e) {
                 System.out.println("Invalid date format. Please use yyyy-MM-dd HH:mm (e.g., 2025-04-15 14:30).");
             }
         }
-        throw new IllegalStateException("Maximum attempts reached for date input.");
+        return null;
     }
 
     private static BigDecimal readPositiveBigDecimal(String prompt) {
         for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
+            System.out.print(prompt);
+            if (!SCANNER.hasNextLine()) {
+                return null;
+            }
+            String input = SCANNER.nextLine().trim();
             try {
-                System.out.print(prompt);
-                String input = SCANNER.nextLine().trim();
                 BigDecimal value = new BigDecimal(input);
                 if (value.compareTo(BigDecimal.ZERO) > 0) {
                     return value;
@@ -112,63 +156,144 @@ public class EventManagementCli {
                 System.out.println("Invalid number format. Please enter a valid positive number (e.g., 10.50).");
             }
         }
-        throw new IllegalStateException("Maximum attempts reached for amount input.");
+        return null;
     }
 
     private static Event createEvent() {
-        try {
-            int type = readIntInput("Event Types: 1) Concert 2) Conference 3) Exhibition 4) Workshop\nSelect Event Type: ", 1, 4);
-            String name = readNonEmptyString("Event Name: ");
-            LocalDateTime start = readDateTime("Start Time (yyyy-MM-dd HH:mm): ");
-            LocalDateTime end = readDateTime("End Time (yyyy-MM-dd HH:mm): ");
-            if (end.isBefore(start)) {
-                throw new IllegalArgumentException("End time cannot be before start time.");
-            }
-            String venue = readNonEmptyString("Venue Name: ");
-            String address = readNonEmptyString("Venue Address: ");
-            int maxAttendees = readIntInput("Max Attendees: ", 1, Integer.MAX_VALUE);
-
-            return switch (type) {
-                case 1 -> {
-                    String artist = readNonEmptyString("Artist: ");
-                    String genre = readNonEmptyString("Genre: ");
-                    BigDecimal price = readPositiveBigDecimal("Ticket Price (USD): ");
-                    yield new Concert(EventId.generate(), name, start, end, new Location(venue, address),
-                            maxAttendees, artist, genre, new Money(price, USD));
-                }
-                case 2 -> {
-                    List<String> speakers = readNonEmptyList("Speakers (comma-separated names): ");
-                    List<String> topics = readNonEmptyList("Topics (comma-separated): ");
-                    BigDecimal fee = readPositiveBigDecimal("Registration Fee (USD): ");
-                    yield new Conference(EventId.generate(), name, start, end, new Location(venue, address),
-                            maxAttendees, speakers, topics, new Money(fee, USD));
-                }
-                case 3 -> {
-                    String theme = readNonEmptyString("Theme: ");
-                    List<String> exhibitors = readNonEmptyList("Exhibitors (comma-separated names): ");
-                    BigDecimal fee = readPositiveBigDecimal("Entry Fee (USD): ");
-                    yield new Exhibition(EventId.generate(), name, start, end, new Location(venue, address),
-                            maxAttendees, theme, exhibitors, new Money(fee, USD));
-                }
-                case 4 -> {
-                    String instructor = readNonEmptyString("Instructor: ");
-                    String skillLevel = readNonEmptyString("Skill Level: ");
-                    BigDecimal fee = readPositiveBigDecimal("Participation Fee (USD): ");
-                    int maxParticipants = readIntInput("Max Participants: ", 1, Integer.MAX_VALUE);
-                    yield new Workshop(EventId.generate(), name, start, end, new Location(venue, address),
-                            maxAttendees, instructor, skillLevel, new Money(fee, USD), maxParticipants);
-                }
-                default -> throw new IllegalStateException("Unexpected event type.");
-            };
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error creating event: " + e.getMessage());
-            throw new IllegalStateException("Failed to create event after validation.");
+        Integer type = readIntInput("Event Types: 1) Concert 2) Conference 3) Exhibition 4) Workshop\nSelect Event Type: ", 1, 4);
+        if (type == null) {
+            System.out.println("Invalid event type. Event creation cancelled.");
+            return null;
         }
+
+        String name = readNonEmptyString("Event Name: ");
+        if (name == null) {
+            System.out.println("Invalid event name. Event creation cancelled.");
+            return null;
+        }
+
+        LocalDateTime start = readDateTime("Start Time (yyyy-MM-dd HH:mm): ");
+        if (start == null) {
+            System.out.println("Invalid start time. Event creation cancelled.");
+            return null;
+        }
+
+        LocalDateTime end = readDateTime("End Time (yyyy-MM-dd HH:mm): ");
+        if (end == null || end.isBefore(start)) {
+            System.out.println("Invalid end time. Event creation cancelled.");
+            return null;
+        }
+
+        String venue = readNonEmptyString("Venue Name: ");
+        if (venue == null) {
+            System.out.println("Invalid venue name. Event creation cancelled.");
+            return null;
+        }
+
+        String address = readNonEmptyString("Venue Address: ");
+        if (address == null) {
+            System.out.println("Invalid venue address. Event creation cancelled.");
+            return null;
+        }
+
+        Integer maxAttendees = readIntInput("Max Attendees: ", 1, Integer.MAX_VALUE);
+        if (maxAttendees == null) {
+            System.out.println("Invalid max attendees. Event creation cancelled.");
+            return null;
+        }
+
+        return switch (type) {
+            case 1 -> {
+                String artist = readNonEmptyString("Artist: ");
+                if (artist == null) {
+                    System.out.println("Invalid artist. Event creation cancelled.");
+                    yield null;
+                }
+                String genre = readNonEmptyString("Genre: ");
+                if (genre == null) {
+                    System.out.println("Invalid genre. Event creation cancelled.");
+                    yield null;
+                }
+                BigDecimal price = readPositiveBigDecimal("Ticket Price (USD): ");
+                if (price == null) {
+                    System.out.println("Invalid ticket price. Event creation cancelled.");
+                    yield null;
+                }
+                yield new Concert(EventId.generate(), name, start, end, new Location(venue, address),
+                        maxAttendees, artist, genre, new Money(price, USD));
+            }
+            case 2 -> {
+                List<String> speakers = readNonEmptyList("Speakers (comma-separated names): ");
+                if (speakers == null) {
+                    System.out.println("Invalid speakers list. Event creation cancelled.");
+                    yield null;
+                }
+                List<String> topics = readNonEmptyList("Topics (comma-separated): ");
+                if (topics == null) {
+                    System.out.println("Invalid topics list. Event creation cancelled.");
+                    yield null;
+                }
+                BigDecimal fee = readPositiveBigDecimal("Registration Fee (USD): ");
+                if (fee == null) {
+                    System.out.println("Invalid registration fee. Event creation cancelled.");
+                    yield null;
+                }
+                yield new Conference(EventId.generate(), name, start, end, new Location(venue, address),
+                        maxAttendees, speakers, topics, new Money(fee, USD));
+            }
+            case 3 -> {
+                String theme = readNonEmptyString("Theme: ");
+                if (theme == null) {
+                    System.out.println("Invalid theme. Event creation cancelled.");
+                    yield null;
+                }
+                List<String> exhibitors = readNonEmptyList("Exhibitors (comma-separated names): ");
+                if (exhibitors == null) {
+                    System.out.println("Invalid exhibitors list. Event creation cancelled.");
+                    yield null;
+                }
+                BigDecimal fee = readPositiveBigDecimal("Entry Fee (USD): ");
+                if (fee == null) {
+                    System.out.println("Invalid entry fee. Event creation cancelled.");
+                    yield null;
+                }
+                yield new Exhibition(EventId.generate(), name, start, end, new Location(venue, address),
+                        maxAttendees, theme, exhibitors, new Money(fee, USD));
+            }
+            case 4 -> {
+                String instructor = readNonEmptyString("Instructor: ");
+                if (instructor == null) {
+                    System.out.println("Invalid instructor. Event creation cancelled.");
+                    yield null;
+                }
+                String skillLevel = readNonEmptyString("Skill Level: ");
+                if (skillLevel == null) {
+                    System.out.println("Invalid skill level. Event creation cancelled.");
+                    yield null;
+                }
+                BigDecimal fee = readPositiveBigDecimal("Participation Fee (USD): ");
+                if (fee == null) {
+                    System.out.println("Invalid participation fee. Event creation cancelled.");
+                    yield null;
+                }
+                Integer maxParticipants = readIntInput("Max Participants: ", 1, Integer.MAX_VALUE);
+                if (maxParticipants == null) {
+                    System.out.println("Invalid max participants. Event creation cancelled.");
+                    yield null;
+                }
+                yield new Workshop(EventId.generate(), name, start, end, new Location(venue, address),
+                        maxAttendees, instructor, skillLevel, new Money(fee, USD), maxParticipants);
+            }
+            default -> null;
+        };
     }
 
     private static List<String> readNonEmptyList(String prompt) {
         for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
             System.out.print(prompt);
+            if (!SCANNER.hasNextLine()) {
+                return null;
+            }
             String input = SCANNER.nextLine().trim();
             List<String> items = Arrays.stream(input.split(",\\s*"))
                     .map(String::trim)
@@ -179,7 +304,7 @@ public class EventManagementCli {
             }
             System.out.println("List cannot be empty. Please provide at least one item.");
         }
-        throw new IllegalStateException("Maximum attempts reached for list input.");
+        return null;
     }
 
     private static void registerAttendee(List<Event> events, List<Registration> registrations) {
@@ -188,41 +313,58 @@ public class EventManagementCli {
             return;
         }
 
-        try {
-            System.out.println("Available Events:");
-            for (int i = 0; i < events.size(); i++) {
-                System.out.println(i + ": " + events.get(i).name() + " (" + eventType(events.get(i)) + ")");
-            }
-            int eventIdx = readIntInput("Select Event Index: ", 0, events.size() - 1);
+        System.out.println("Available Events:");
+        for (int i = 0; i < events.size(); i++) {
+            System.out.println(i + ": " + events.get(i).name() + " (" + eventType(events.get(i)) + ")");
+        }
+        Integer eventIdx = readIntInput("Select Event Index: ", 0, events.size() - 1);
+        if (eventIdx == null) {
+            System.out.println("Invalid event selection. Registration cancelled.");
+            return;
+        }
 
-            String name = readNonEmptyString("Attendee Name: ");
-            String email = readEmail("Email: ");
-            String phone = readNonEmptyString("Phone: ");
+        String name = readNonEmptyString("Attendee Name: ");
+        if (name == null) {
+            System.out.println("Invalid attendee name. Registration cancelled.");
+            return;
+        }
 
-            Attendee attendee = new Attendee(UUID.randomUUID(), name, email, phone);
-            Event event = events.get(eventIdx);
-            var regOpt = RegistrationOperations.registerForEvent(event, attendee, registrations);
-            if (regOpt.isPresent()) {
-                registrations.add(regOpt.get());
-                System.out.println("Registration successful for " + event.name() + "!");
-            } else {
-                System.out.println("Registration failed: No capacity available for " + event.name() + ".");
-            }
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error registering attendee: " + e.getMessage());
+        String email = readEmail("Email: ");
+        if (email == null) {
+            System.out.println("Invalid email. Registration cancelled.");
+            return;
+        }
+
+        String phone = readNonEmptyString("Phone: ");
+        if (phone == null) {
+            System.out.println("Invalid phone. Registration cancelled.");
+            return;
+        }
+
+        Attendee attendee = new Attendee(UUID.randomUUID(), name, email, phone);
+        Event event = events.get(eventIdx);
+        var regOpt = RegistrationOperations.registerForEvent(event, attendee, registrations);
+        if (regOpt.isPresent()) {
+            registrations.add(regOpt.get());
+            System.out.println("Registration successful for " + event.name() + "!");
+        } else {
+            System.out.println("Registration failed: No capacity available for " + event.name() + ".");
         }
     }
 
     private static String readEmail(String prompt) {
         for (int attempt = 0; attempt < MAX_RETRIES; attempt++) {
             System.out.print(prompt);
+            if (!SCANNER.hasNextLine()) {
+                return null;
+            }
             String input = SCANNER.nextLine().trim();
             if (input.contains("@") && !input.isBlank()) {
                 return input;
             }
             System.out.println("Please enter a valid email address containing '@'.");
         }
-        throw new IllegalStateException("Maximum attempts reached for email input.");
+        return null;
     }
 
     private static void viewRevenue(List<Registration> registrations) {
@@ -248,43 +390,43 @@ public class EventManagementCli {
             return;
         }
 
-        try {
-            listEvents(events);
-            int eventIdx = readIntInput("Select Event Index to View Info: ", 0, events.size() - 1);
+        listEvents(events);
+        Integer eventIdx = readIntInput("Select Event Index to View Info: ", 0, events.size() - 1);
+        if (eventIdx == null) {
+            System.out.println("Invalid event selection. Returning to main menu.");
+            return;
+        }
 
-            Event event = events.get(eventIdx);
-            System.out.println("\nEvent Information:");
-            System.out.println("Name: " + event.name());
-            System.out.println("Start Time: " + event.startTime().format(DATE_FORMAT));
-            System.out.println("End Time: " + event.endTime().format(DATE_FORMAT));
-            System.out.println("Location: " + event.location().name() + " (" + event.location().address() + ")");
-            System.out.println("Max Attendees: " + event.maxAttendees());
+        Event event = events.get(eventIdx);
+        System.out.println("\nEvent Information:");
+        System.out.println("Name: " + event.name());
+        System.out.println("Start Time: " + event.startTime().format(DATE_FORMAT));
+        System.out.println("End Time: " + event.endTime().format(DATE_FORMAT));
+        System.out.println("Location: " + event.location().name() + " (" + event.location().address() + ")");
+        System.out.println("Max Attendees: " + event.maxAttendees());
 
-            switch (event) {
-                case Concert concert -> {
-                    System.out.println("Artist: " + concert.artist());
-                    System.out.println("Genre: " + concert.genre());
-                    System.out.println("Ticket Price: " + concert.ticketPrice().amount() + " " + concert.ticketPrice().currency());
-                }
-                case Conference conference -> {
-                    System.out.println("Speakers: " + String.join(", ", conference.speakers()));
-                    System.out.println("Topics: " + String.join(", ", conference.topics()));
-                    System.out.println("Registration Fee: " + conference.registrationFee().amount() + " " + conference.registrationFee().currency());
-                }
-                case Exhibition exhibition -> {
-                    System.out.println("Theme: " + exhibition.theme());
-                    System.out.println("Exhibitors: " + String.join(", ", exhibition.exhibitors()));
-                    System.out.println("Entry Fee: " + exhibition.entryFee().amount() + " " + exhibition.entryFee().currency());
-                }
-                case Workshop workshop -> {
-                    System.out.println("Instructor: " + workshop.instructor());
-                    System.out.println("Skill Level: " + workshop.skillLevel());
-                    System.out.println("Participation Fee: " + workshop.participationFee().amount() + " " + workshop.participationFee().currency());
-                    System.out.println("Max Participants: " + workshop.maxParticipants());
-                }
+        switch (event) {
+            case Concert concert -> {
+                System.out.println("Artist: " + concert.artist());
+                System.out.println("Genre: " + concert.genre());
+                System.out.println("Ticket Price: " + concert.ticketPrice().amount() + " " + concert.ticketPrice().currency());
             }
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error viewing event info: " + e.getMessage());
+            case Conference conference -> {
+                System.out.println("Speakers: " + String.join(", ", conference.speakers()));
+                System.out.println("Topics: " + String.join(", ", conference.topics()));
+                System.out.println("Registration Fee: " + conference.registrationFee().amount() + " " + conference.registrationFee().currency());
+            }
+            case Exhibition exhibition -> {
+                System.out.println("Theme: " + exhibition.theme());
+                System.out.println("Exhibitors: " + String.join(", ", exhibition.exhibitors()));
+                System.out.println("Entry Fee: " + exhibition.entryFee().amount() + " " + exhibition.entryFee().currency());
+            }
+            case Workshop workshop -> {
+                System.out.println("Instructor: " + workshop.instructor());
+                System.out.println("Skill Level: " + workshop.skillLevel());
+                System.out.println("Participation Fee: " + workshop.participationFee().amount() + " " + workshop.participationFee().currency());
+                System.out.println("Max Participants: " + workshop.maxParticipants());
+            }
         }
     }
 
@@ -294,26 +436,26 @@ public class EventManagementCli {
             return;
         }
 
-        try {
-            listEvents(events);
-            int eventIdx = readIntInput("Select Event Index to View Attendees: ", 0, events.size() - 1);
+        listEvents(events);
+        Integer eventIdx = readIntInput("Select Event Index to View Attendees: ", 0, events.size() - 1);
+        if (eventIdx == null) {
+            System.out.println("Invalid event selection. Returning to main menu.");
+            return;
+        }
 
-            Event event = events.get(eventIdx);
-            List<Registration> eventRegistrations = registrations.stream()
-                    .filter(reg -> reg.event().id().equals(event.id()))
-                    .toList();
-            if (eventRegistrations.isEmpty()) {
-                System.out.println("No attendees registered for " + event.name() + ".");
-                return;
-            }
+        Event event = events.get(eventIdx);
+        List<Registration> eventRegistrations = registrations.stream()
+                .filter(reg -> reg.event().id().equals(event.id()))
+                .toList();
+        if (eventRegistrations.isEmpty()) {
+            System.out.println("No attendees registered for " + event.name() + ".");
+            return;
+        }
 
-            System.out.println("\nAttendees for " + event.name() + ":");
-            for (Registration reg : eventRegistrations) {
-                Attendee attendee = reg.attendee();
-                System.out.println("Name: " + attendee.name() + ", Email: " + attendee.email() + ", Phone: " + attendee.phone());
-            }
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error viewing attendees: " + e.getMessage());
+        System.out.println("\nAttendees for " + event.name() + ":");
+        for (Registration reg : eventRegistrations) {
+            Attendee attendee = reg.attendee();
+            System.out.println("Name: " + attendee.name() + ", Email: " + attendee.email() + ", Phone: " + attendee.phone());
         }
     }
 

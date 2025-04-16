@@ -41,14 +41,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.event-management-system [:cli-app:com.example.eventmanagement.cli.CliPropertyTests.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.event-management-system [:cli-app:com.example.eventmanagement.cli.EventManagementCli.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.event-management-system [:core:operations:com.example.core.operations.EventManagementDemoTest.main()].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.event-management-system [:cli-app:com.example.eventmanagement.cli.CliPropertyTests.main()].executor": "Run",
+    "Gradle.event-management-system [:cli-app:com.example.eventmanagement.cli.EventManagementCli.main()].executor": "Run",
+    "Gradle.event-management-system [:core:operations:com.example.core.operations.EventManagementDemoTest.main()].executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Application.EventManagementCli">
     <configuration name="CliPropertyTests" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.example.eventmanagement.cli.CliPropertyTests" />

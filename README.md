@@ -44,7 +44,72 @@ Directory Navigation:
 * OOAD demo: ooad-foundations/event-management-system/
 
 ## Running the Demos
-Each demo has scripts to build and run the CLI. Use .sh scripts on Unix-like systems or .bat scripts on Windows.
+
+### VDD Demo
+
+[![asciicast](https://asciinema.org/a/Y0HXrJEQAMtRf0bmdHQfwrhfx.svg)](https://asciinema.org/a/Y0HXrJEQAMtRf0bmdHQfwrhfx)
+
+1. First ensure required artifacts are published in your local maven repository
+
+* Unix-like Systems(Linux/MacOs):
+
+```bash
+cd core/
+./gradlew publishToMavenLocal --no-daemon
+
+# The artifacts (common, domain, operations) are published to ~/.m2/repository/com/example/core/
+```
+
+* Windows
+```cmd
+cd core
+gradlew.bat publishToMavenLocal --no-daemon
+# The artifacts (common, domain, operations) are published to %USERPROFILE%\.m2\repository\com\example\core\
+```
+
+2. Build a Fatjar of the `cli-app`
+
+* Unix-like Systems(Linux/MacOs):
+```bash
+cd ..
+cd cli-app
+./gradlew clean build --no-daemon
+```
+
+* Windows
+```cmd
+cd ..
+cd cli-app
+gradlew.bat clean build --no-daemon
+```
+
+3. Test the standalone `cli-app`
+
+* Unix-like Systems(Linux/MacOs):
+```bash
+java -jar build/libs/cli-app-1.0.0.jar --help
+
+# Expected sample output
+Event Organizer CLI:
+Usage: java -jar cli-app.jar [command]
+Commands:
+  --help          Display this help message
+  list-events     List all events (requires pre-loaded data)
+Interactive mode is used if no arguments are provided.
+```
+
+* Windows
+```cmd
+java -jar build\libs\cli-app-1.0.0.jar --help
+
+# Expected sample output
+Event Organizer CLI:
+Usage: java -jar cli-app.jar [command]
+Commands:
+  --help          Display this help message
+  list-events     List all events (requires pre-loaded data)
+Interactive mode is used if no arguments are provided.
+```
 
 ### OOAD Demo
 * Unix-like Systems:
@@ -78,37 +143,6 @@ Run CLI:
 src\windows-scripts\run-ooad-cli.bat
 ```
 
-
-### VDD Demo
-* Unix-like Systems:
-Build:
-```bash
-
-cd demos/event-management-system
-./src/scripts/build.sh
-
-# Creates out/ with compiled classes.
-```
-Run CLI:
-```bash
-
-./src/scripts/run-cli.sh
-
-#Launches the CLI with similar functionality to OOAD.
-```
-* Windows:
-Build:
-```cmd
-
-cd demos\event-management-system
-src\windows-scripts\build.bat
-```
-Run CLI:
-```cmd
-
-src\windows-scripts\run-vdd-cli.bat
-```
-
 ## CLI Usage
 Both CLIs offer:  
 * Create events (Concert, Conference, Exhibition, Workshop)
@@ -119,24 +153,10 @@ Both CLIs offer:
 
 * List events or exit
 
-```
-#Example Interaction (OOAD CLI):
-
-Welcome to Event Organizer CLI (OOP)
-Options: 1) Create Event 2) Register Attendee 3) View Revenue 4) List Events 5) Exit 6) View Event Info 7) View Event Attendees
-Choose an option: 1
-Event Types: 1) Concert 2) Conference 3) Exhibition 4) Workshop
-Select Event Type: 2
-Event Name: Kenya JUG Sessions
-Start Time (yyyy-MM-dd HH:mm): 2025-04-12 20:00
-End Time (yyyy-MM-dd HH:mm): 2025-04-12 21:00
-```
-
-The VDD CLI follows a similar flow with immutable data handling.
-
-## Additional Notes
-
-No External Dependencies: Just Pure JDK 21
+## Requirements
+- Java 21+
+- Maven (Required)
+- Gradle (Optional)
 
 ## Troubleshooting:
 Ensure `JAVA_HOME` is set to JDK 21.

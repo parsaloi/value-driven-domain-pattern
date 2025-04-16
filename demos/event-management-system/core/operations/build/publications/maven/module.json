@@ -1,0 +1,112 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.example.core",
+    "module": "operations",
+    "version": "1.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.13"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "com.example.core",
+          "module": "common",
+          "version": {
+            "requires": "1.0.0"
+          }
+        },
+        {
+          "group": "com.example.core",
+          "module": "domain",
+          "version": {
+            "requires": "1.0.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "operations-1.0.0.jar",
+          "url": "operations-1.0.0.jar",
+          "size": 5965,
+          "sha512": "67ec23e8f955a905955e4f4aa6e3772126ca1d96436da00c8876285bb27f3f9a4a66786cdb7249a887799ae8ea7bec1ff226125a6c14ecd0907a0fd61f9b2540",
+          "sha256": "a0a7f02579423541e9827629fabfe4fda796c9eebf6cf20ef44b02d158309a02",
+          "sha1": "3327dbdfd620d8fc69f1b6945cce92ba63062c77",
+          "md5": "0ac3b870a7dd15c574f7c50a33d4cdd1"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.example.core",
+          "module": "common",
+          "version": {
+            "requires": "1.0.0"
+          }
+        },
+        {
+          "group": "com.example.core",
+          "module": "domain",
+          "version": {
+            "requires": "1.0.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "operations-1.0.0.jar",
+          "url": "operations-1.0.0.jar",
+          "size": 5965,
+          "sha512": "67ec23e8f955a905955e4f4aa6e3772126ca1d96436da00c8876285bb27f3f9a4a66786cdb7249a887799ae8ea7bec1ff226125a6c14ecd0907a0fd61f9b2540",
+          "sha256": "a0a7f02579423541e9827629fabfe4fda796c9eebf6cf20ef44b02d158309a02",
+          "sha1": "3327dbdfd620d8fc69f1b6945cce92ba63062c77",
+          "md5": "0ac3b870a7dd15c574f7c50a33d4cdd1"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "operations-1.0.0-sources.jar",
+          "url": "operations-1.0.0-sources.jar",
+          "size": 2713,
+          "sha512": "c05133c2f96ffc4fd79f71880610463af05b7c1ce10499c2168985c29f4c8947883fe9bb1c97c9161dad8e303a28c4d0a65153a6d6d31f2007c5e0b903ce6c70",
+          "sha256": "b3785dab6bbcca025e891b9d059220ab61d2da9d7a538378b1d137eaee956855",
+          "sha1": "785af26d54b2990a73adbf247e5062ac2cbdea6d",
+          "md5": "8f6962d8521ad0c6c1d185530c7840bc"
+        }
+      ]
+    }
+  ]
+}

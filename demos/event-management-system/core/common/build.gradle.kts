@@ -4,3 +4,4 @@ plugins {
 
 group = "com.example.core.common"
 version = "1.0.0"
+
