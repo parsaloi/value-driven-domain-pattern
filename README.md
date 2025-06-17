@@ -2,8 +2,13 @@
 
 This project showcases two implementations of an event management system to compare classic Object-Oriented Analysis and Design (OOAD) with the Value-Driven Domain Pattern (VDD). The demos are presented as part of a conference talk, demonstrating modern Java design practices.
 
-- **OOAD Demo**: Uses mutable classes, inheritance, and Gang of Four patterns (Factory, Strategy, Observer).
+- **OOAD Demo**: Uses mutable classes, inheritance, instance methods.
 - **VDD Demo**: Leverages immutable records, sealed interfaces, pattern matching, and pure functions.
+
+Gang of Four patterns applied: 
+* Factory
+* Strategy
+* Observer
 
 Both demos include a command-line interface (CLI) to create events, register attendees, view details, and calculate revenue.
 
@@ -31,7 +36,7 @@ Clone or Download:
 
 * Clone the repository:
 ```bash
-git clone <repository-url>
+git clone [value-driven-domain-pattern](https://github.com/parsaloi/value-driven-domain-pattern.git)
 cd value-driven-domain-pattern
 ```
 
