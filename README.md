@@ -35,8 +35,9 @@ OpenJDK 64-Bit Server VM (build 21.0.6+10-LTS, mixed mode, sharing)
 Clone or Download:  
 
 * Clone the repository:
-```bash
+  
 git clone [value-driven-domain-pattern](https://github.com/parsaloi/value-driven-domain-pattern.git)
+```bash
 cd value-driven-domain-pattern
 ```
 
